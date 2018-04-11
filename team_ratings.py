@@ -2,12 +2,15 @@ from bs4 import BeautifulSoup, Comment
 import requests
 import csv
 
-
+# simple clear function if rewriting a csv
+# NOTE: can't just use 'w' instead of 'a' when opening CSV
+# bc CSV reopened for each player
 def clear(file):
     table = open(file, 'w')
     table.close()
 
 
+# Add headers to CSV containing stats on diff shooting splits
 def add_headers_shooting_stats(file):
     stats = ['split', 'value', 'fg', 'fga', 'fg_pct',
              '3pm', '3pma', '3p_pct', 'efg_pct',
@@ -17,6 +20,7 @@ def add_headers_shooting_stats(file):
     a.writerow(stats)
 
 
+# Add headers to CSV of data from every shot taken in season
 def add_headers_shots_taken(file):
     stats = ['date', 'game', 'value', 'distance', 'made', 'score']
     table = open(file, 'w')
@@ -48,6 +52,7 @@ def player_csv_shooting(url, file, edit='w'):
     table.close()
 
 
+# All below get functions are for use in season_shot_by_shot
 def getDate(s):
     d = s[0].split(",")
     return d[0] + "," + d[1]
@@ -73,6 +78,7 @@ def getScore(s):
     return s[3].split(" ")[-1]
 
 
+# Write every single shot a player took in a season to a CSV
 def season_shot_by_shot(url, file, edit):
     page = requests.get(url)
 
@@ -98,3 +104,25 @@ def season_shot_by_shot(url, file, edit):
 
                 a.writerow(data)
     table.close()
+
+
+def get_shooting_seasons(url):
+    links = []
+
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "lxml")
+    c = soup.find("li", "condensed hasmore ").find_all('ul')
+    for link in c[2].find_all('a', href=True):
+        links.append(link['href'])
+    return links
+
+
+print(get_shooting_seasons("https://www.basketball-reference.com/players/c/curryst01/shooting/2018"))
+
+
+def run_shooting_seasons(links):
+    for link in links:
+        season_shot_by_shot('https://www.basketball-reference.com' + link,
+                            'steph_every_shot.csv', 'a')
+
+
