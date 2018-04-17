@@ -41,12 +41,11 @@ class Player:
                 separate = ""
                 if "Position:" in p.text:
                     position = Player.getPosition(p.text.split()[1])
-                elif "lb" in p.text:
+                elif "lb" in p.text and "kg)" in p.text:
                     separate = p.text.split()
                     attributes.append(float(separate[2][1:4]))
                     attributes.append(float(separate[3][:-3]))
                     break
-
             attributes.append(position)
             stats = soup.find("div", "stats_pullout").find_all("div")
 
