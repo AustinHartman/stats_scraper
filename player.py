@@ -70,10 +70,10 @@ class Player:
                 val = float(stats[14].find("p").text)
             attributes.append(val)
         except:
-            None
+            for i in range(10):
+                attributes.append(None)
 
         return attributes
-
 
 
 
