@@ -29,10 +29,12 @@ class Player:
         soup = BeautifulSoup(page.content, "lxml")
 
         #find name
-        name = soup.find("h1", attrs={"itemprop": "name"}).text
-        attributes.append(name)
-
         try:
+            name = soup.find("h1", attrs={"itemprop": "name"}).text
+
+            # used to search out which players cause errors
+            print(name)
+            attributes.append(name)
             paras = soup.find_all("p")
             position = ""
             for p in paras:
@@ -54,7 +56,6 @@ class Player:
                 else:
                     val = float(stat.find("p").text)
                 attributes.append(val)
-                print(attributes)
 
             for stat in stats[8:13]:
                 if stat.find("p").text == '-':
@@ -62,19 +63,15 @@ class Player:
                 else:
                     val = float(stat.find("p").text)
                 attributes.append(val)
-                print(attributes)
 
             if stats[14].find("p").text == '-':
                 val = None
             else:
                 val = float(stats[14].find("p").text)
-            attributes.append(val)
+            attributes.append(val)            
         except:
-            for i in range(10):
+            l = len(attributes)
+            for i in range(14-l):
                 attributes.append(None)
 
         return attributes
-
-
-
-
