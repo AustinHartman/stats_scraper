@@ -15,6 +15,15 @@ team_ratings.py       includes functions to compile csv of ever shot a player
                       Note: need to rename file b/c doesnt pertain to team
                       ratings
 
+player.py             player class to fetch attributes and basic season stats
+					  on individual players
+					  
+collect_data.py       uses player class to cycle though all players in NBA w/
+					  player class
+					  
+attributes_scatter.py uses seaborn and matplotlib to create scatter on player
+					  height v weight w/ points colored based on position
+
 steph_2015_2016_shooting.csv csv of steph curry's 2015-2016 advanced shooting
 							 stats.
 						
@@ -25,11 +34,14 @@ nba.csv:              created using functions in learn2.py to create csv of basi
 		              career stats (ppg, rbpg, efg%, etc. ) of every active NBA
 		              player as of 04/07/2018
 		      
-warriros.csv:         also created using learn2.py and gives same career statistics
+warriors.csv:         also created using learn2.py and gives same career statistics
                       but only for active players on the warriors as of 04/07/2018
               
 klay_thompson.csv
 stephen_curry.csv
 shaun_livingston.csv: each csv contains the career statistics for the
 					  given player
+					  
+nba_plyr_reg_season_stats.csv: 2017-2018 season stats for each player, height weight
+							   and win shares and player efficiency rating
 					  
