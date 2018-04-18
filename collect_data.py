@@ -62,5 +62,3 @@ def compile_csv(teams, file):
         players = get_players('https://www.basketball-reference.com' + (team.find('a', href=True))['href'])
         get_team_stats(players, file)
 
-#compile_csv(get_teams_west("https://www.basketball-reference.com/leagues/NBA_2018.html"), 'example_csvs/nba_plyr_reg_season_stats.csv')
-compile_csv(get_teams_east("https://www.basketball-reference.com/leagues/NBA_2018.html"), 'example_csvs/nba_plyr_reg_season_stats.csv')
