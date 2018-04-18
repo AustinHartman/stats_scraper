@@ -13,7 +13,16 @@ def clear(file):
 
 # array stats represents headers in csv which is about to be compiled
 def add_headers(file):
+    # commented out stats arrays represent other headers commonly used with Player class functions
     stats = ['name', 'height(cm)', 'weight(kg)', 'position', 'games', 'pts', 'trb', 'ast', 'fg_pct',  'fg3_pct', 'ft_pct', 'efg', 'per', 'ws']
+    '''
+    stats = ['player_name', 'season', 'age', 'team', 'pos', 'games', 'games_started', 'mpg', 'fg_per_g', 'fga_per_g',
+             'fg_pct', 'fg3_per_g', 'fg3_pct', 'fg2_per_g', 'fg2a_per_g', 'fg2_pct', 'efg_pct',
+             'ft_per_g', 'fta_per_g', 'ft_pct', 'orb_per_g', 'drb_per_g', 'trb_per_g', 'ast_per_g',
+             'stl_per_g', 'blk_per_g', 'tov_per_g', 'pf_per_g', 'pts_per_g']
+    stats = ['date', 'game', 'value', 'distance', 'made', 'score']
+    '''
+
     table = open(file, 'w')
     a = csv.writer(table)
     a.writerow(stats)
@@ -27,7 +36,6 @@ def get_players(url):
     soup = BeautifulSoup(page.content, "lxml")
     players = soup.find_all("tr")
     return players
-
 
 # loop through roster player by player and call Player class to scrape stats
 def get_team_stats(players, file):
@@ -61,4 +69,8 @@ def compile_csv(teams, file):
         print(team)
         players = get_players('https://www.basketball-reference.com' + (team.find('a', href=True))['href'])
         get_team_stats(players, file)
+
+
+compile_csv(get_teams_east("https://www.basketball-reference.com/leagues/NBA_2018.html"))
+compile_csv(get_teams_west("https://www.basketball-reference.com/leagues/NBA_2018.html"))
 
