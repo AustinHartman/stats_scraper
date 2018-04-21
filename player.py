@@ -104,11 +104,19 @@ class Player:
     def get_score(s):
         return s[3].split(" ")[-1]
 
+    def get_quarter(s):
+        return s[1].split()[0][0]
+
+    def get_time(s):
+        return s[1].split()[2]
+
+
     def get_shooting_url(self, year):
         return self.url[:-5] + "/shooting/" + str(year)
 
     # Write every single shot a player took in a season to a CSV
     def every_shot_in_season(self, file, year):
+
         page = requests.get(Player.get_shooting_url(self, year))
 
         # changing the 'w' to 'a' allows me to append to the file instead of rewrite
@@ -116,6 +124,10 @@ class Player:
         a = csv.writer(table)
 
         soup = BeautifulSoup(page.content, "lxml")
+
+        name_text = soup.find("h1", attrs={"itemprop": "name"}).text.split()
+        name = name_text[0] + " " + name_text[1]
+
         comment_lines = soup.find_all(text=lambda text: isinstance(text, Comment))
         for comment in comment_lines:
             soup = BeautifulSoup(comment, "lxml")
@@ -124,12 +136,15 @@ class Player:
                 for div in divs:
                     data = []
                     s = str(div['tip']).split("<br>")
+                    data.append(name)
                     data.append(Player.get_date(s))
                     data.append(Player.get_game(s))
                     data.append(Player.get_value(s))
                     data.append(Player.get_dist(s))
                     data.append(Player.get_made(s))
                     data.append(Player.get_score(s))
+                    data.append(Player.get_quarter(s))
+                    data.append(Player.get_time(s))
 
                     a.writerow(data)
         table.close()
@@ -195,7 +210,64 @@ def clear(file):
     table = open(file, 'w')
     table.close()
 
-clear("example_csvs/steph_every_shot.csv")
+def add_headers_shots_taken(file):
+    stats = ['name', 'date', 'game', 'value', 'distance', 'made', 'score', 'quarter', 'time']
+    table = open(file, 'w')
+    a = csv.writer(table)
+    a.writerow(stats)
 
-steph = Player("https://www.basketball-reference.com/players/c/curryst01.html")
-steph.every_shot_in_career("example_csvs/steph_every_shot.csv")
+"""
+def compile_csv(url):
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "lxml")
+    name = soup.find("h1", attrs={"itemprop": "name"}).text
+    name = name.lower()
+    csv_path = "example_csvs/all_shots_csvs/" + name.split()[0] + "_" + name.split()[1] + "_all_shots.csv"
+    clear(csv_path)
+    add_headers_shots_taken(csv_path)
+    Player(url).every_shot_in_career(csv_path)
+"""
+
+
+#----------------------------------------------
+
+# get all players from bball_ref team roster url
+def get_players(url):
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "lxml")
+    players = soup.find_all("tr")
+    return players
+
+# loop through roster player by player and call Player class to scrape stats
+def get_team_stats(players, file):
+    for player in players[1:]:
+        Player('https://www.basketball-reference.com'+(player.find('a', href=True))['href']).every_shot_in_season(file, "2018")
+
+
+# get all of the teams in the east
+def get_teams_east(url):
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "lxml")
+    east_teams = soup.find('div', attrs={"id": "all_confs_standings_E"}).find_all('tr')
+    return east_teams
+
+
+# get all of the teams in the west
+def get_teams_west(url):
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "lxml")
+    west_teams = soup.find('div', attrs={"id": "all_confs_standings_W"}).find_all('tr')
+    return west_teams
+
+
+# take a list of teams and cycle through individual rosters, at each team call get_players which calls Player class to scrape player stats
+def compile_csv(teams, file):
+    for team in teams[1:]:
+        print(team.text)
+        players = get_players('https://www.basketball-reference.com' + (team.find('a', href=True))['href'])
+        get_team_stats(players, file)
+
+
+#clear("example_csvs/all_shots_csvs/shots_2017_18.csv")
+#add_headers_shots_taken("example_csvs/all_shots_csvs/shots_2017_18.csv")
+compile_csv(get_teams_east("https://www.basketball-reference.com/leagues/NBA_2018.html"), "example_csvs/all_shots_csvs/shots_2017_18.csv")
