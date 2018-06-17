@@ -16,4 +16,8 @@ Files Included:
 
  - example_csvs: directory has some example csvs created using the 
                  player class
+                 
+                 - Note for files in all_shots_in_career: shot data 
+                   begins in the 2000-01 season so players which played 
+                   before only have data from the 00-01 season and onward
 					  
