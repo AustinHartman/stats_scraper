@@ -20,4 +20,9 @@ Files Included:
                  - Note for files in all_shots_in_career: shot data 
                    begins in the 2000-01 season so players which played 
                    before only have data from the 00-01 season and onward
-					  
+
+
+Note: only a sample of scraped data is found in this repository. Email me for
+additional data requests
+
+Email: amhartman@scu.edu					  
